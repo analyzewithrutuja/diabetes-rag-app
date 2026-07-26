@@ -171,6 +171,18 @@ div[data-testid="stForm"] {
     background: #faf7f9; border-radius: 10px;
 }
 
+/* Make the question text input white, not blending with the page background */
+[data-testid="stTextInput"] input {
+    background-color: #ffffff !important;
+    border: 1.5px solid var(--border) !important;
+    border-radius: 10px !important;
+    padding: 10px 14px !important;
+}
+[data-testid="stTextInput"] input:focus {
+    border-color: var(--pink) !important;
+    box-shadow: 0 0 0 2px rgba(232,24,122,0.15) !important;
+}
+
 /* Circular pink send button next to the question box */
 .ask-btn-anchor ~ div [data-testid="stButton"] button {
     border-radius: 50% !important;
@@ -534,7 +546,7 @@ with st.container(border=True):
         )
     with btn_col:
         st.markdown('<div class="ask-btn-anchor"></div>', unsafe_allow_html=True)
-        ask_clicked = st.button("➤", key="ask_button")
+        ask_clicked = st.button("↑", key="ask_button")
 
 if ask_clicked and query:
     if not hf_token:
