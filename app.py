@@ -48,147 +48,139 @@ html, body, [class*="css"]  {
     --pink2: #f9004d;
     --muted: #7a7a8c;
     --border: #e0e0e0;
+    --shadow: 0 4px 24px rgba(25,13,38,0.08);
+    --shadow-lg: 0 10px 36px rgba(232,24,122,0.14);
 }
 
-.stApp {
-    background-color: #f0f0f0;
-}
+.stApp { background-color: #f0f0f0; }
 
-h1, h2, h3 {
-    color: var(--navy) !important;
-    font-weight: 800 !important;
-}
+h1, h2, h3 { color: var(--navy) !important; font-weight: 800 !important; }
 
 .app-eyebrow {
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
 }
-.app-eyebrow::before {
-    content: '';
-    width: 24px;
-    height: 1px;
-    background: var(--muted);
-}
+.app-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--muted); }
 
-.app-title {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: var(--navy);
-    margin-bottom: 4px;
-}
-.app-title .pink { color: var(--pink); font-weight: 900; }
+.app-title { font-size: 2.3rem; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+.app-title .pink { background: linear-gradient(135deg, #e8187a, #f9004d); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 900; }
 
-.app-sub {
-    font-size: 0.85rem;
-    color: var(--muted);
-    margin-bottom: 28px;
-}
+.app-sub { font-size: 0.86rem; color: var(--muted); margin-bottom: 28px; max-width: 720px; line-height: 1.7; }
 
-/* Form and result cards */
-div[data-testid="stForm"], .result-card {
+/* Form card */
+div[data-testid="stForm"] {
     background: #ffffff;
     border: 1.5px solid var(--border);
     border-radius: 16px;
     padding: 24px 28px;
+    box-shadow: var(--shadow);
+}
+
+/* Native Streamlit bordered containers -> styled as our cards */
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background: #ffffff;
+    border: 1.5px solid var(--border) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.25s;
+}
+[data-testid="stVerticalBlockBorderWrapper"]:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.card-accent {
+    height: 4px;
+    background: linear-gradient(135deg, #e8187a, #f9004d);
+    border-radius: 4px 4px 0 0;
+    margin: -1px -1px 18px -1px;
 }
 
 .section-label {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--navy);
-    margin: 18px 0 10px 0;
-    padding-bottom: 6px;
+    font-size: 0.98rem; font-weight: 700; color: var(--navy);
+    margin: 18px 0 10px 0; padding-bottom: 6px;
     border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+}
+.section-label::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--pink); flex-shrink: 0;
 }
 
-/* Buttons */
+.helper-text {
+    font-size: 0.78rem; color: var(--muted); font-style: italic; margin-bottom: 14px;
+}
+
+/* Buttons (Assess Risk, Clear patient) */
 .stButton > button, .stFormSubmitButton > button {
     background: linear-gradient(135deg, #e8187a, #f9004d);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-size: 0.78rem;
-    padding: 10px 24px;
-    transition: all 0.2s;
+    color: white; border: none; border-radius: 10px;
+    font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    font-size: 0.78rem; padding: 10px 24px; transition: all 0.2s;
 }
 .stButton > button:hover, .stFormSubmitButton > button:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(232,24,122,0.35);
+    opacity: 0.92; transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(232,24,122,0.4);
 }
 
 /* Risk badge */
 .risk-badge {
-    display: inline-block;
-    padding: 4px 14px;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: white;
+    display: inline-block; padding: 5px 16px; border-radius: 20px;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: white; margin-top: 6px;
 }
-.risk-high { background: var(--pink2); }
+.risk-high { background: linear-gradient(135deg, #e8187a, #f9004d); }
 .risk-moderate { background: #e8187a; }
-.risk-low { background: #190d26; opacity: 0.7; }
+.risk-low { background: var(--navy); opacity: 0.75; }
+
+.risk-score-number {
+    font-size: 2.4rem; font-weight: 800; color: var(--navy); line-height: 1;
+}
 
 /* Flag list */
 .flag-item {
-    font-size: 0.8rem;
-    color: var(--navy);
-    background: rgba(232,24,122,0.07);
+    font-size: 0.8rem; color: var(--navy);
+    background: rgba(232,24,122,0.06);
     border-left: 3px solid var(--pink);
-    padding: 8px 12px;
-    border-radius: 6px;
-    margin-bottom: 6px;
+    padding: 9px 14px; border-radius: 0 8px 8px 0; margin-bottom: 7px;
 }
 
-/* Expander (Patient Information dropdown) styling */
+/* Expander (Patient Information dropdown) */
 [data-testid="stExpander"] {
-    background: #ffffff;
-    border: 1.5px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
+    background: #ffffff; border: 1.5px solid var(--border);
+    border-radius: 16px; overflow: hidden; box-shadow: var(--shadow);
 }
 [data-testid="stExpander"] summary {
-    padding: 16px 24px;
-    font-weight: 700;
-    color: var(--navy);
-    font-size: 0.9rem;
-    background: #ffffff;
-    transition: all 0.2s;
+    padding: 16px 24px; font-weight: 700; color: var(--navy);
+    font-size: 0.92rem; background: #ffffff; transition: all 0.2s;
 }
 [data-testid="stExpander"] summary:hover {
-    background: rgba(232, 24, 122, 0.04);
-    color: var(--pink);
+    background: rgba(232, 24, 122, 0.045); color: var(--pink);
 }
-[data-testid="stExpander"] summary svg {
-    fill: var(--pink) !important;
-}
-[data-testid="stExpander"] details[open] summary {
-    border-bottom: 1.5px solid var(--border);
-}
+[data-testid="stExpander"] summary svg { fill: var(--pink) !important; }
+[data-testid="stExpander"] details[open] summary { border-bottom: 1.5px solid var(--border); }
 
-/* Q&A answer separator */
+/* Q&A entries */
 .qa-question {
-    font-weight: 700;
-    color: var(--navy);
-    margin-top: 14px;
+    font-weight: 700; color: var(--navy); margin-top: 16px;
+    padding-left: 14px; border-left: 3px solid var(--pink); font-size: 0.88rem;
 }
 .qa-answer {
-    font-size: 0.88rem;
-    color: var(--text);
-    line-height: 1.7;
-    margin-bottom: 10px;
+    font-size: 0.86rem; color: var(--navy); line-height: 1.75;
+    margin: 8px 0 16px 14px; padding: 14px 16px;
+    background: #faf7f9; border-radius: 10px;
+}
+
+/* Circular pink send button next to the question box */
+.ask-btn-anchor ~ div [data-testid="stButton"] button {
+    border-radius: 50% !important;
+    width: 46px !important; height: 46px !important;
+    min-width: 46px !important;
+    padding: 0 !important;
+    font-size: 1.15rem !important;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+    box-shadow: 0 6px 16px rgba(232,24,122,0.35);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -324,11 +316,12 @@ PRIORITY FLAGS:
     else:
         patient_block = "PATIENT CONTEXT:\nNone provided — answer generally."
 
-    return f"""You are a clinical decision-support assistant. Answer the question
-below using ONLY the guideline excerpts provided. If patient context is given,
-tailor your answer to it and prioritize any flagged concerns. Cite the source
-organization (e.g., ADA, WHO, CDC, Mayo) for each recommendation. If the
-guidelines don't address something, say so rather than guessing.
+    return f"""You are a clinical decision-support assistant specialized in type 2
+diabetes management. Answer the question below using ONLY the guideline
+excerpts provided. If patient context is given, tailor your answer to it and
+prioritize any flagged concerns. Cite the source organization (e.g., ADA,
+WHO, CDC, Mayo) for each recommendation. If the guidelines don't address
+something, say so rather than guessing.
 
 {patient_block}
 
@@ -378,10 +371,14 @@ st.markdown('<div class="app-sub">Enter a patient\'s details to get a readmissio
 # ==========================================================================
 # PATIENT FORM (optional, expandable)
 # ==========================================================================
-with st.expander("Patient Information (optional — fill in for a personalized answer)", expanded=False):
+with st.expander("Fill in patient details to see their readmission risk", expanded=False):
     with st.form("patient_form"):
-        st.caption(f"Auto-generated Encounter ID: {random.randint(100000, 999999)} "
-                   f"(display only — not used in prediction)")
+        st.markdown(
+            '<div class="helper-text">Encounter ID: '
+            f'{random.randint(100000, 999999)} (auto-generated, display only). '
+            'Adjust the values below to match your patient, then click Assess Risk.</div>',
+            unsafe_allow_html=True
+        )
 
         st.markdown('<div class="section-label">Demographics & Admission</div>', unsafe_allow_html=True)
         c1, c2, c3 = st.columns(3)
@@ -482,59 +479,62 @@ with st.expander("Patient Information (optional — fill in for a personalized a
         st.session_state.chat_history = []
 
 # ==========================================================================
-# RISK RESULT (if a patient has been assessed)
+# RISK RESULT (native bordered container — avoids unbalanced-div bugs)
 # ==========================================================================
 if st.session_state.patient_context:
     ctx = st.session_state.patient_context
     risk_level = get_risk_level(ctx["risk_score"])
     risk_class = {"High": "risk-high", "Moderate": "risk-moderate", "Low": "risk-low"}[risk_level]
 
-    st.markdown('<div class="result-card" style="margin-top:16px;">', unsafe_allow_html=True)
-    c1, c2 = st.columns([1, 2])
-    with c1:
-        st.metric("30-Day Readmission Risk", f"{ctx['risk_score']*100:.1f}%")
-        st.markdown(f'<span class="risk-badge {risk_class}">{risk_level} risk</span>', unsafe_allow_html=True)
-    with c2:
-        st.markdown("**Flags**")
-        flags = get_risk_flags(ctx)
-        if flags:
-            for f in flags:
-                st.markdown(f'<div class="flag-item">{f}</div>', unsafe_allow_html=True)
-        else:
-            st.write("None triggered.")
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container(border=True):
+        st.markdown('<div class="card-accent"></div>', unsafe_allow_html=True)
+        c1, c2 = st.columns([1, 2])
+        with c1:
+            st.markdown('<div style="font-size:0.75rem;color:#7a7a8c;text-transform:uppercase;letter-spacing:0.08em;">30-Day Readmission Risk</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="risk-score-number">{ctx["risk_score"]*100:.1f}%</div>', unsafe_allow_html=True)
+            st.markdown(f'<span class="risk-badge {risk_class}">{risk_level} risk</span>', unsafe_allow_html=True)
+        with c2:
+            st.markdown('<div class="section-label" style="margin-top:0;">Flags</div>', unsafe_allow_html=True)
+            flags = get_risk_flags(ctx)
+            if flags:
+                for f in flags:
+                    st.markdown(f'<div class="flag-item">{f}</div>', unsafe_allow_html=True)
+            else:
+                st.write("None triggered.")
 
-    if st.button("Clear patient and ask general questions instead"):
-        st.session_state.patient_context = None
-        st.session_state.chat_history = []
-        st.rerun()
+        if st.button("Clear patient and ask general questions instead"):
+            st.session_state.patient_context = None
+            st.session_state.chat_history = []
+            st.rerun()
 
 # ==========================================================================
-# ASK A QUESTION — plain inline widgets, attached directly below,
-# nothing floating or fixed to the screen
+# ASK A QUESTION (native bordered container, pink circular send button)
 # ==========================================================================
-st.markdown('<div class="result-card" style="margin-top:16px;">', unsafe_allow_html=True)
+with st.container(border=True):
+    st.markdown('<div class="card-accent"></div>', unsafe_allow_html=True)
 
-if st.session_state.patient_context:
-    st.markdown('<div class="section-label" style="margin-top:0;">Ask About This Patient</div>', unsafe_allow_html=True)
-    st.caption("Your question will be answered using this patient's risk profile.")
-else:
-    st.markdown('<div class="section-label" style="margin-top:0;">Ask a General Question</div>', unsafe_allow_html=True)
-    st.caption("No patient loaded — you'll get general guidance from ADA, WHO, CDC, and Mayo Clinic.")
+    if st.session_state.patient_context:
+        st.markdown('<div class="section-label" style="margin-top:0;">Ask About This Patient</div>', unsafe_allow_html=True)
+        st.caption("Your question will be answered using this patient's risk profile.")
+    else:
+        st.markdown('<div class="section-label" style="margin-top:0;">Ask a Question</div>', unsafe_allow_html=True)
+        st.caption("Get evidence-based answers from trusted clinical guidelines on type 2 diabetes.")
 
-for q, a in st.session_state.chat_history:
-    st.markdown(f'<div class="qa-question">{q}</div>', unsafe_allow_html=True)
-    st.markdown(f'<div class="qa-answer">{a}</div>', unsafe_allow_html=True)
+    for q, a in st.session_state.chat_history:
+        st.markdown(f'<div class="qa-question">{q}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="qa-answer">{a}</div>', unsafe_allow_html=True)
 
-query = st.text_input(
-    "Your question",
-    placeholder="e.g. What should be included in a discharge plan?",
-    label_visibility="collapsed",
-    key="question_box",
-)
-ask_clicked = st.button("Ask", key="ask_button")
-
-st.markdown('</div>', unsafe_allow_html=True)
+    input_col, btn_col = st.columns([10, 1])
+    with input_col:
+        query = st.text_input(
+            "Your question",
+            placeholder="e.g. What should be included in a discharge plan?",
+            label_visibility="collapsed",
+            key="question_box",
+        )
+    with btn_col:
+        st.markdown('<div class="ask-btn-anchor"></div>', unsafe_allow_html=True)
+        ask_clicked = st.button("➤", key="ask_button")
 
 if ask_clicked and query:
     if not hf_token:
