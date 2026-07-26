@@ -175,24 +175,26 @@ div[data-testid="stForm"] {
 [data-testid="stTextInput"] input {
     background-color: #ffffff !important;
     border: 1.5px solid var(--border) !important;
-    border-radius: 10px !important;
+    border-right: none !important;
+    border-radius: 10px 0 0 10px !important;
     padding: 10px 14px !important;
+    height: 46px !important;
 }
 [data-testid="stTextInput"] input:focus {
     border-color: var(--pink) !important;
-    box-shadow: 0 0 0 2px rgba(232,24,122,0.15) !important;
+    box-shadow: none !important;
 }
 
 /* Circular pink send button next to the question box */
 .ask-btn-anchor ~ div [data-testid="stButton"] button {
-    border-radius: 50% !important;
+    border-radius: 0 10px 10px 0 !important;
     width: 46px !important; height: 46px !important;
     min-width: 46px !important;
     padding: 0 !important;
     font-size: 1.15rem !important;
     display: flex; align-items: center; justify-content: center;
-    margin-top: 2px;
-    box-shadow: 0 6px 16px rgba(232,24,122,0.35);
+    margin-top: 0 !important;
+    box-shadow: none !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -536,7 +538,7 @@ with st.container(border=True):
         st.markdown(f'<div class="qa-question">{q}</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="qa-answer">{a}</div>', unsafe_allow_html=True)
 
-    input_col, btn_col = st.columns([10, 1])
+    input_col, btn_col = st.columns([10, 1], gap="small")
     with input_col:
         query = st.text_input(
             "Your question",
