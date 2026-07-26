@@ -2,9 +2,10 @@
 Hospital Readmission Risk + Diabetes Guideline RAG Assistant
 ================================================================
 Single-page layout: optional patient intake form at top, followed by
-one unified Q&A interface below. If patient data has been submitted,
-answers are personalized to that patient's risk profile. Otherwise,
-questions are answered generally from the guidelines alone.
+one unified Q&A section below (plain inline widgets, not floating).
+If patient data has been submitted, answers are personalized to that
+patient's risk profile. Otherwise, questions are answered generally
+from the guidelines alone.
 
 Deployment target: Streamlit Community Cloud
 
@@ -89,6 +90,7 @@ h1, h2, h3 {
     margin-bottom: 28px;
 }
 
+/* Form and result cards */
 div[data-testid="stForm"], .result-card {
     background: #ffffff;
     border: 1.5px solid var(--border);
@@ -105,6 +107,7 @@ div[data-testid="stForm"], .result-card {
     border-bottom: 1px solid var(--border);
 }
 
+/* Buttons */
 .stButton > button, .stFormSubmitButton > button {
     background: linear-gradient(135deg, #e8187a, #f9004d);
     color: white;
@@ -123,6 +126,7 @@ div[data-testid="stForm"], .result-card {
     box-shadow: 0 6px 20px rgba(232,24,122,0.35);
 }
 
+/* Risk badge */
 .risk-badge {
     display: inline-block;
     padding: 4px 14px;
@@ -137,6 +141,7 @@ div[data-testid="stForm"], .result-card {
 .risk-moderate { background: #e8187a; }
 .risk-low { background: #190d26; opacity: 0.7; }
 
+/* Flag list */
 .flag-item {
     font-size: 0.8rem;
     color: var(--navy);
@@ -147,8 +152,43 @@ div[data-testid="stForm"], .result-card {
     margin-bottom: 6px;
 }
 
-[data-testid="stChatMessage"] {
-    border-radius: 14px;
+/* Expander (Patient Information dropdown) styling */
+[data-testid="stExpander"] {
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+}
+[data-testid="stExpander"] summary {
+    padding: 16px 24px;
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 0.9rem;
+    background: #ffffff;
+    transition: all 0.2s;
+}
+[data-testid="stExpander"] summary:hover {
+    background: rgba(232, 24, 122, 0.04);
+    color: var(--pink);
+}
+[data-testid="stExpander"] summary svg {
+    fill: var(--pink) !important;
+}
+[data-testid="stExpander"] details[open] summary {
+    border-bottom: 1.5px solid var(--border);
+}
+
+/* Q&A answer separator */
+.qa-question {
+    font-weight: 700;
+    color: var(--navy);
+    margin-top: 14px;
+}
+.qa-answer {
+    font-size: 0.88rem;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 10px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -336,7 +376,7 @@ st.markdown('<div class="app-title">Diabetes Readmission <span class="pink">Risk
 st.markdown('<div class="app-sub">Enter a patient\'s details to get a readmission risk score, or skip straight to asking a question — the assistant answers from ADA, WHO, CDC, and Mayo Clinic guidelines either way.</div>', unsafe_allow_html=True)
 
 # ==========================================================================
-# PATIENT FORM (optional)
+# PATIENT FORM (optional, expandable)
 # ==========================================================================
 with st.expander("Patient Information (optional — fill in for a personalized answer)", expanded=False):
     with st.form("patient_form"):
@@ -449,7 +489,7 @@ if st.session_state.patient_context:
     risk_level = get_risk_level(ctx["risk_score"])
     risk_class = {"High": "risk-high", "Moderate": "risk-moderate", "Low": "risk-low"}[risk_level]
 
-    st.markdown('<div class="result-card">', unsafe_allow_html=True)
+    st.markdown('<div class="result-card" style="margin-top:16px;">', unsafe_allow_html=True)
     c1, c2 = st.columns([1, 2])
     with c1:
         st.metric("30-Day Readmission Risk", f"{ctx['risk_score']*100:.1f}%")
@@ -470,22 +510,33 @@ if st.session_state.patient_context:
         st.rerun()
 
 # ==========================================================================
-# UNIFIED Q&A — below everything, works with or without patient context
+# ASK A QUESTION — plain inline widgets, attached directly below,
+# nothing floating or fixed to the screen
 # ==========================================================================
-st.markdown('<div class="section-label">Ask a Question</div>', unsafe_allow_html=True)
+st.markdown('<div class="result-card" style="margin-top:16px;">', unsafe_allow_html=True)
+
 if st.session_state.patient_context:
-    st.caption("Answers will be personalized to the patient assessed above.")
+    st.markdown('<div class="section-label" style="margin-top:0;">Ask About This Patient</div>', unsafe_allow_html=True)
+    st.caption("Your question will be answered using this patient's risk profile.")
 else:
-    st.caption("No patient loaded — answers will be general guidance from ADA, WHO, CDC, and Mayo Clinic.")
+    st.markdown('<div class="section-label" style="margin-top:0;">Ask a General Question</div>', unsafe_allow_html=True)
+    st.caption("No patient loaded — you'll get general guidance from ADA, WHO, CDC, and Mayo Clinic.")
 
 for q, a in st.session_state.chat_history:
-    with st.chat_message("user"):
-        st.write(q)
-    with st.chat_message("assistant"):
-        st.write(a)
+    st.markdown(f'<div class="qa-question">{q}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="qa-answer">{a}</div>', unsafe_allow_html=True)
 
-query = st.chat_input("e.g. What should be included in a discharge plan?")
-if query:
+query = st.text_input(
+    "Your question",
+    placeholder="e.g. What should be included in a discharge plan?",
+    label_visibility="collapsed",
+    key="question_box",
+)
+ask_clicked = st.button("Ask", key="ask_button")
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+if ask_clicked and query:
     if not hf_token:
         st.error("Please enter your Hugging Face token in the sidebar first.")
     else:

@@ -1,10 +1,10 @@
 streamlit
-   pandas
-   numpy
-   joblib
-   chromadb
-   sentence-transformers
-   huggingface_hub
-   xgboost
-   scikit-learn
-   torchvision
+pandas
+numpy
+joblib
+chromadb
+sentence-transformers
+huggingface_hub
+xgboost
+scikit-learn
+torchvision
