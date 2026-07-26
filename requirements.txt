@@ -5,3 +5,5 @@ joblib
 chromadb
 sentence-transformers
 huggingface_hub
+xgboost
+scikit-learn
