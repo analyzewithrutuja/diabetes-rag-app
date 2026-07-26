@@ -49,41 +49,46 @@ html, body, [class*="css"]  {
     --muted: #7a7a8c;
     --border: #e0e0e0;
     --shadow: 0 4px 24px rgba(25,13,38,0.08);
-    --shadow-lg: 0 10px 36px rgba(232,24,122,0.14);
+    --shadow-lg: 0 12px 40px rgba(232,24,122,0.16);
 }
 
 .stApp { background-color: #f0f0f0; }
 
 h1, h2, h3 { color: var(--navy) !important; font-weight: 800 !important; }
 
+/* ---------- Header ---------- */
 .app-eyebrow {
     font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 4px;
+    color: var(--muted); margin-bottom: 6px;
     display: flex; align-items: center; gap: 8px;
 }
 .app-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--muted); }
 
-.app-title { font-size: 2.3rem; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
-.app-title .pink { background: linear-gradient(135deg, #e8187a, #f9004d); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 900; }
+.app-title { font-size: 2.4rem; font-weight: 800; color: var(--navy); margin-bottom: 6px; letter-spacing: -0.01em; }
+.app-title .pink {
+    background: linear-gradient(135deg, #e8187a, #f9004d);
+    -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 900;
+}
 
-.app-sub { font-size: 0.86rem; color: var(--muted); margin-bottom: 28px; max-width: 720px; line-height: 1.7; }
+.app-sub { font-size: 0.87rem; color: var(--muted); margin-bottom: 32px; max-width: 720px; line-height: 1.75; }
 
-/* Form card */
+/* ---------- Cards ---------- */
 div[data-testid="stForm"] {
     background: #ffffff;
     border: 1.5px solid var(--border);
-    border-radius: 16px;
-    padding: 24px 28px;
+    border-radius: 18px;
+    padding: 26px 30px;
     box-shadow: var(--shadow);
 }
 
-/* Native Streamlit bordered containers -> styled as our cards */
 [data-testid="stVerticalBlockBorderWrapper"] {
     background: #ffffff;
     border: 1.5px solid var(--border) !important;
-    border-radius: 16px !important;
+    border-radius: 18px !important;
     box-shadow: var(--shadow);
-    transition: box-shadow 0.25s;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    margin-bottom: 20px;
 }
 [data-testid="stVerticalBlockBorderWrapper"]:hover {
     box-shadow: var(--shadow-lg);
@@ -91,118 +96,168 @@ div[data-testid="stForm"] {
 
 .card-accent {
     height: 4px;
-    background: linear-gradient(135deg, #e8187a, #f9004d);
-    border-radius: 4px 4px 0 0;
-    margin: -1px -1px 18px -1px;
+    background: linear-gradient(90deg, #e8187a, #f9004d);
+    margin: -1px -1px 20px -1px;
 }
 
 .section-label {
-    font-size: 0.98rem; font-weight: 700; color: var(--navy);
-    margin: 18px 0 10px 0; padding-bottom: 6px;
+    font-size: 1rem; font-weight: 700; color: var(--navy);
+    margin: 20px 0 12px 0; padding-bottom: 8px;
     border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 8px;
+    display: flex; align-items: center; gap: 9px;
+    letter-spacing: -0.01em;
 }
 .section-label::before {
-    content: ''; width: 6px; height: 6px; border-radius: 50%;
-    background: var(--pink); flex-shrink: 0;
+    content: ''; width: 7px; height: 7px; border-radius: 50%;
+    background: linear-gradient(135deg, #e8187a, #f9004d); flex-shrink: 0;
 }
 
 .helper-text {
-    font-size: 0.78rem; color: var(--muted); font-style: italic; margin-bottom: 14px;
+    font-size: 0.78rem; color: var(--muted); font-style: italic; margin-bottom: 16px;
+    padding: 8px 12px; background: rgba(232,24,122,0.04); border-radius: 8px;
+    border-left: 2px solid rgba(232,24,122,0.3);
 }
 
-/* Buttons (Assess Risk, Clear patient) */
+/* ---------- Buttons ---------- */
 .stButton > button, .stFormSubmitButton > button {
     background: linear-gradient(135deg, #e8187a, #f9004d);
     color: white; border: none; border-radius: 10px;
     font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-    font-size: 0.78rem; padding: 10px 24px; transition: all 0.2s;
+    font-size: 0.78rem; padding: 11px 26px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 .stButton > button:hover, .stFormSubmitButton > button:hover {
-    opacity: 0.92; transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(232,24,122,0.4);
+    opacity: 0.94; transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(232,24,122,0.4);
+}
+.stButton > button:active, .stFormSubmitButton > button:active {
+    transform: translateY(0); opacity: 1;
 }
 
-/* Risk badge */
+/* ---------- Risk display ---------- */
 .risk-badge {
-    display: inline-block; padding: 5px 16px; border-radius: 20px;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 16px; border-radius: 20px;
     font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; color: white; margin-top: 6px;
+    text-transform: uppercase; color: white; margin-top: 8px;
 }
 .risk-high { background: linear-gradient(135deg, #e8187a, #f9004d); }
 .risk-moderate { background: #e8187a; }
-.risk-low { background: var(--navy); opacity: 0.75; }
+.risk-low { background: var(--navy); opacity: 0.8; }
 
-.risk-score-number {
-    font-size: 2.4rem; font-weight: 800; color: var(--navy); line-height: 1;
+.risk-eyebrow {
+    font-size: 0.72rem; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.1em; font-weight: 600; margin-bottom: 2px;
 }
+.risk-score-number { font-size: 2.6rem; font-weight: 800; color: var(--navy); line-height: 1.05; letter-spacing: -0.02em; }
 
 /* Flag list */
 .flag-item {
-    font-size: 0.8rem; color: var(--navy);
-    background: rgba(232,24,122,0.06);
+    font-size: 0.81rem; color: var(--navy);
+    background: rgba(232,24,122,0.055);
     border-left: 3px solid var(--pink);
-    padding: 9px 14px; border-radius: 0 8px 8px 0; margin-bottom: 7px;
+    padding: 10px 14px; border-radius: 0 8px 8px 0; margin-bottom: 8px;
+    transition: background 0.2s ease;
 }
+.flag-item:hover { background: rgba(232,24,122,0.09); }
 
-/* Expander (Patient Information dropdown) */
+/* ---------- Expander ---------- */
 [data-testid="stExpander"] {
     background: #ffffff; border: 1.5px solid var(--border);
-    border-radius: 16px; overflow: hidden; box-shadow: var(--shadow);
+    border-radius: 18px; overflow: hidden; box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    transition: box-shadow 0.3s ease;
 }
+[data-testid="stExpander"]:hover { box-shadow: var(--shadow-lg); }
 [data-testid="stExpander"] summary {
-    padding: 16px 24px; font-weight: 700; color: var(--navy);
-    font-size: 0.92rem; background: #ffffff; transition: all 0.2s;
+    padding: 18px 26px; font-weight: 700; color: var(--navy);
+    font-size: 0.94rem; background: #ffffff; transition: all 0.2s ease;
 }
 [data-testid="stExpander"] summary:hover {
     background: rgba(232, 24, 122, 0.045); color: var(--pink);
 }
-[data-testid="stExpander"] summary svg { fill: var(--pink) !important; }
+[data-testid="stExpander"] summary svg { fill: var(--pink) !important; transition: transform 0.2s ease; }
 [data-testid="stExpander"] details[open] summary { border-bottom: 1.5px solid var(--border); }
 
-/* Q&A entries */
+/* ---------- Q&A entries ---------- */
 .qa-question {
-    font-weight: 700; color: var(--navy); margin-top: 16px;
-    padding-left: 14px; border-left: 3px solid var(--pink); font-size: 0.88rem;
+    font-weight: 700; color: var(--navy); margin-top: 18px;
+    padding-left: 14px; border-left: 3px solid var(--pink); font-size: 0.89rem;
 }
 .qa-answer {
-    font-size: 0.86rem; color: var(--navy); line-height: 1.75;
-    margin: 8px 0 16px 14px; padding: 14px 16px;
-    background: #faf7f9; border-radius: 10px;
+    font-size: 0.86rem; color: var(--navy); line-height: 1.8;
+    margin: 10px 0 18px 14px; padding: 16px 18px;
+    background: #faf7f9; border-radius: 12px;
+    border: 1px solid rgba(232,24,122,0.08);
 }
 
-/* Search-bar look: input has no visible border of its own, since it sits
-   inside a bordered container that provides the box outline */
+/* ---------- Search-bar pill (nested container) ---------- */
+[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stVerticalBlockBorderWrapper"] {
+    padding: 4px 8px 4px 20px !important;
+    box-shadow: none !important;
+    border-radius: 999px !important;
+    border: 1.5px solid var(--border) !important;
+    margin-bottom: 0 !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stVerticalBlockBorderWrapper"]:hover {
+    box-shadow: none !important;
+    border-color: #d8d8e0 !important;
+}
+[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stVerticalBlockBorderWrapper"]:has(input:focus) {
+    border-color: var(--pink) !important;
+    box-shadow: 0 0 0 3px rgba(232,24,122,0.1) !important;
+}
+
 [data-testid="stTextInput"] input {
     background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    padding: 8px 6px !important;
-    height: 38px !important;
+    padding: 10px 6px !important;
+    height: 40px !important;
+    font-size: 0.9rem !important;
+    color: var(--navy) !important;
 }
 [data-testid="stTextInput"] input:focus {
     box-shadow: none !important;
     outline: none !important;
 }
+[data-testid="stTextInput"] input::placeholder { color: #a8a8b8 !important; }
 
 [data-testid="stHorizontalBlock"] { align-items: center !important; }
-
-/* Compact pill look for the nested search-bar container specifically */
-[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stVerticalBlockBorderWrapper"] {
-    padding: 6px 10px !important;
-    box-shadow: none !important;
-}
 
 /* Circular pink send button */
 .ask-btn-marker ~ div [data-testid="stButton"] button,
 div:has(> [data-testid="stMarkdown"] .ask-btn-marker) + div [data-testid="stButton"] button {
     border-radius: 50% !important;
-    width: 32px !important; height: 32px !important;
-    min-width: 32px !important;
+    width: 36px !important; height: 36px !important;
+    min-width: 36px !important;
     padding: 0 !important;
-    font-size: 0.95rem !important;
+    font-size: 1rem !important;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 10px rgba(232,24,122,0.35);
+    box-shadow: 0 4px 12px rgba(232,24,122,0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.ask-btn-marker ~ div [data-testid="stButton"] button:hover,
+div:has(> [data-testid="stMarkdown"] .ask-btn-marker) + div [data-testid="stButton"] button:hover {
+    transform: scale(1.08) !important;
+    box-shadow: 0 6px 16px rgba(232,24,122,0.5) !important;
+}
+
+/* ---------- Sidebar ---------- */
+[data-testid="stSidebar"] {
+    background: var(--navy);
+}
+[data-testid="stSidebar"] * { color: #ffffff !important; }
+[data-testid="stSidebar"] input {
+    background: rgba(255,255,255,0.08) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    border-radius: 8px !important;
+    color: #ffffff !important;
+}
+[data-testid="stSidebar"] [data-testid="stAlert"] {
+    background: rgba(232,24,122,0.15) !important;
+    border-radius: 10px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -512,7 +567,7 @@ if st.session_state.patient_context:
         st.markdown('<div class="card-accent"></div>', unsafe_allow_html=True)
         c1, c2 = st.columns([1, 2])
         with c1:
-            st.markdown('<div style="font-size:0.75rem;color:#7a7a8c;text-transform:uppercase;letter-spacing:0.08em;">30-Day Readmission Risk</div>', unsafe_allow_html=True)
+            st.markdown('<div class="risk-eyebrow">30-Day Readmission Risk</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="risk-score-number">{ctx["risk_score"]*100:.1f}%</div>', unsafe_allow_html=True)
             st.markdown(f'<span class="risk-badge {risk_class}">{risk_level} risk</span>', unsafe_allow_html=True)
         with c2:
