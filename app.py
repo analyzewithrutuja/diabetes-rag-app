@@ -175,26 +175,33 @@ div[data-testid="stForm"] {
 [data-testid="stTextInput"] input {
     background-color: #ffffff !important;
     border: 1.5px solid var(--border) !important;
-    border-right: none !important;
-    border-radius: 10px 0 0 10px !important;
-    padding: 10px 14px !important;
+    border-radius: 10px !important;
+    padding: 10px 54px 10px 14px !important;
     height: 46px !important;
 }
 [data-testid="stTextInput"] input:focus {
     border-color: var(--pink) !important;
-    box-shadow: none !important;
+    box-shadow: 0 0 0 2px rgba(232,24,122,0.15) !important;
 }
 
 /* Circular pink send button next to the question box */
+/* Circular pink send button, overlaid inside the right edge of the question box */
+.ask-btn-anchor ~ div [data-testid="stButton"] {
+    margin-top: -58px !important;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 8px;
+    position: relative;
+    z-index: 5;
+}
 .ask-btn-anchor ~ div [data-testid="stButton"] button {
-    border-radius: 0 10px 10px 0 !important;
-    width: 46px !important; height: 46px !important;
-    min-width: 46px !important;
+    border-radius: 50% !important;
+    width: 34px !important; height: 34px !important;
+    min-width: 34px !important;
     padding: 0 !important;
-    font-size: 1.15rem !important;
+    font-size: 1rem !important;
     display: flex; align-items: center; justify-content: center;
-    margin-top: 0 !important;
-    box-shadow: none !important;
+    box-shadow: 0 4px 10px rgba(232,24,122,0.35);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -538,17 +545,14 @@ with st.container(border=True):
         st.markdown(f'<div class="qa-question">{q}</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="qa-answer">{a}</div>', unsafe_allow_html=True)
 
-    input_col, btn_col = st.columns([10, 1], gap="small")
-    with input_col:
-        query = st.text_input(
-            "Your question",
-            placeholder="e.g. What should be included in a discharge plan?",
-            label_visibility="collapsed",
-            key="question_box",
-        )
-    with btn_col:
-        st.markdown('<div class="ask-btn-anchor"></div>', unsafe_allow_html=True)
-        ask_clicked = st.button("↑", key="ask_button")
+    query = st.text_input(
+        "Your question",
+        placeholder="e.g. What should be included in a discharge plan?",
+        label_visibility="collapsed",
+        key="question_box",
+    )
+    st.markdown('<div class="ask-btn-anchor"></div>', unsafe_allow_html=True)
+    ask_clicked = st.button("↑", key="ask_button")
 
 if ask_clicked and query:
     if not hf_token:
