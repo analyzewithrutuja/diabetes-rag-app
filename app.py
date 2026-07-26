@@ -191,25 +191,38 @@ div[data-testid="stForm"] {
     border: 1px solid rgba(232,24,122,0.08);
 }
 
-/* ---------- Search-bar pill (nested container) ---------- */
-[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stVerticalBlockBorderWrapper"] {
+/* ---------- Search-bar pill (targeted via st.container key="search_bar") ---------- */
+.st-key-search_bar {
+    border-radius: 999px !important;
     padding: 4px 8px 4px 20px !important;
     box-shadow: none !important;
-    border-radius: 999px !important;
     border: 1.5px solid var(--border) !important;
     margin-bottom: 0 !important;
+    background: #ffffff !important;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stVerticalBlockBorderWrapper"]:hover {
-    box-shadow: none !important;
+.st-key-search_bar:hover {
     border-color: #d8d8e0 !important;
 }
-[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stVerticalBlockBorderWrapper"]:has(input:focus) {
+.st-key-search_bar:has(input:focus) {
     border-color: var(--pink) !important;
     box-shadow: 0 0 0 3px rgba(232,24,122,0.1) !important;
 }
 
-[data-testid="stTextInput"] input {
+/* Remove Streamlit/BaseWeb's own input border + red focus ring so only
+   our pill container's border shows */
+.st-key-search_bar [data-baseweb="input"],
+.st-key-search_bar [data-baseweb="base-input"] {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+.st-key-search_bar [data-baseweb="input"]:focus-within {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.st-key-search_bar [data-testid="stTextInput"] input {
     background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -218,17 +231,16 @@ div[data-testid="stForm"] {
     font-size: 0.9rem !important;
     color: var(--navy) !important;
 }
-[data-testid="stTextInput"] input:focus {
+.st-key-search_bar [data-testid="stTextInput"] input:focus {
     box-shadow: none !important;
     outline: none !important;
 }
-[data-testid="stTextInput"] input::placeholder { color: #a8a8b8 !important; }
+.st-key-search_bar [data-testid="stTextInput"] input::placeholder { color: #a8a8b8 !important; }
 
 [data-testid="stHorizontalBlock"] { align-items: center !important; }
 
-/* Circular pink send button */
-.ask-btn-marker ~ div [data-testid="stButton"] button,
-div:has(> [data-testid="stMarkdown"] .ask-btn-marker) + div [data-testid="stButton"] button {
+/* Circular pink send button (targeted via st.button key="ask_button") */
+.st-key-ask_button button {
     border-radius: 50% !important;
     width: 36px !important; height: 36px !important;
     min-width: 36px !important;
@@ -238,8 +250,7 @@ div:has(> [data-testid="stMarkdown"] .ask-btn-marker) + div [data-testid="stButt
     box-shadow: 0 4px 12px rgba(232,24,122,0.4);
     transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
-.ask-btn-marker ~ div [data-testid="stButton"] button:hover,
-div:has(> [data-testid="stMarkdown"] .ask-btn-marker) + div [data-testid="stButton"] button:hover {
+.st-key-ask_button button:hover {
     transform: scale(1.08) !important;
     box-shadow: 0 6px 16px rgba(232,24,122,0.5) !important;
 }
@@ -602,7 +613,7 @@ with st.container(border=True):
         st.markdown(f'<div class="qa-answer">{a}</div>', unsafe_allow_html=True)
 
     query = ""
-    with st.container(border=True):
+    with st.container(border=True, key="search_bar"):
         input_col, btn_col = st.columns([11, 1], gap="small")
         with input_col:
             query = st.text_input(
@@ -612,7 +623,6 @@ with st.container(border=True):
                 key="question_box",
             )
         with btn_col:
-            st.markdown('<span class="ask-btn-marker"></span>', unsafe_allow_html=True)
             ask_clicked = st.button("↑", key="ask_button")
 
 if ask_clicked and query:
