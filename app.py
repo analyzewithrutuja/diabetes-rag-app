@@ -210,22 +210,16 @@ div[data-testid="stForm"] {
 }
 
 /* Remove Streamlit/BaseWeb's own input border + red focus ring so only
-   our pill container's border shows */
-.st-key-search_bar [data-baseweb="input"],
-.st-key-search_bar [data-baseweb="base-input"] {
+   our pill container's border shows — target every descendant to be safe */
+.st-key-search_bar [data-testid="stTextInput"] * {
     border: none !important;
     box-shadow: none !important;
+    outline: none !important;
     background: transparent !important;
-}
-.st-key-search_bar [data-baseweb="input"]:focus-within {
-    border: none !important;
-    box-shadow: none !important;
 }
 
 .st-key-search_bar [data-testid="stTextInput"] input {
     background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
     padding: 10px 6px !important;
     height: 40px !important;
     font-size: 0.9rem !important;
