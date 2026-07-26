@@ -187,19 +187,21 @@ div[data-testid="stForm"] {
 /* Circular pink send button next to the question box */
 /* Circular pink send button, overlaid inside the right edge of the question box */
 div:has(> [data-testid="stMarkdown"] .ask-btn-anchor) + div [data-testid="stButton"] {
-    margin-top: -54px !important;
+    margin-top: -48px !important;
+    width: 100% !important;
     display: flex;
     justify-content: flex-end;
-    padding-right: 8px;
+    align-items: center;
+    padding-right: 10px;
     position: relative;
     z-index: 5;
 }
 div:has(> [data-testid="stMarkdown"] .ask-btn-anchor) + div [data-testid="stButton"] button {
     border-radius: 50% !important;
-    width: 34px !important; height: 34px !important;
-    min-width: 34px !important;
+    width: 32px !important; height: 32px !important;
+    min-width: 32px !important;
     padding: 0 !important;
-    font-size: 1rem !important;
+    font-size: 0.95rem !important;
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 4px 10px rgba(232,24,122,0.35);
 }
