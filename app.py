@@ -1,24 +1,23 @@
 """
 Hospital Readmission Risk + Diabetes Guideline RAG Assistant
 ================================================================
-A Streamlit app combining:
-1. Full patient intake form (all relevant columns from diabetic_data.xlsx)
-2. XGBoost readmission risk prediction
-3. RAG-based, personalized, citation-backed Q&A over ADA/WHO/CDC/Mayo
-   guidelines, iterable for multiple questions per patient
+Single-page layout: optional patient intake form at top, followed by
+one unified Q&A interface below. If patient data has been submitted,
+answers are personalized to that patient's risk profile. Otherwise,
+questions are answered generally from the guidelines alone.
 
-Deployment target: Hugging Face Spaces (Streamlit SDK)
+Deployment target: Streamlit Community Cloud
 
-Required files in the same folder as this app.py:
+Required files in the same repo as this app.py:
 - xgb_readmission_model.pkl
 - model_columns.pkl
 - chroma_db/               (the persisted Chroma vector database folder)
 - requirements.txt
+- .streamlit/config.toml
 """
 
 import re
 import random
-import numpy as np
 import pandas as pd
 import streamlit as st
 import joblib
@@ -29,8 +28,130 @@ from huggingface_hub import InferenceClient
 # ==========================================================================
 # PAGE CONFIG
 # ==========================================================================
-st.set_page_config(page_title="Diabetes Readmission Risk + Guideline Assistant",
-                    layout="wide")
+st.set_page_config(page_title="Diabetes Readmission Risk Assistant", layout="wide")
+
+# ==========================================================================
+# CUSTOM CSS — matches the analyzewithrutuja.github.io portfolio theme
+# ==========================================================================
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+html, body, [class*="css"]  {
+    font-family: 'Poppins', sans-serif;
+}
+
+:root {
+    --navy: #190d26;
+    --pink: #e8187a;
+    --pink2: #f9004d;
+    --muted: #7a7a8c;
+    --border: #e0e0e0;
+}
+
+.stApp {
+    background-color: #f0f0f0;
+}
+
+h1, h2, h3 {
+    color: var(--navy) !important;
+    font-weight: 800 !important;
+}
+
+.app-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.app-eyebrow::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--muted);
+}
+
+.app-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 4px;
+}
+.app-title .pink { color: var(--pink); font-weight: 900; }
+
+.app-sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 28px;
+}
+
+div[data-testid="stForm"], .result-card {
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+}
+
+.section-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 18px 0 10px 0;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}
+
+.stButton > button, .stFormSubmitButton > button {
+    background: linear-gradient(135deg, #e8187a, #f9004d);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    padding: 10px 24px;
+    transition: all 0.2s;
+}
+.stButton > button:hover, .stFormSubmitButton > button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(232,24,122,0.35);
+}
+
+.risk-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: white;
+}
+.risk-high { background: var(--pink2); }
+.risk-moderate { background: #e8187a; }
+.risk-low { background: #190d26; opacity: 0.7; }
+
+.flag-item {
+    font-size: 0.8rem;
+    color: var(--navy);
+    background: rgba(232,24,122,0.07);
+    border-left: 3px solid var(--pink);
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+}
+
+[data-testid="stChatMessage"] {
+    border-radius: 14px;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ==========================================================================
 # LOAD RESOURCES (cached so they only load once)
@@ -56,7 +177,7 @@ embed_model = load_embedding_model()
 collection = load_vector_db()
 
 # ==========================================================================
-# REFERENCE VALUE LISTS (from the UCI Diabetes 130-US Hospitals codebook)
+# REFERENCE VALUE LISTS
 # ==========================================================================
 AGE_BANDS = ['[0-10)', '[10-20)', '[20-30)', '[30-40)', '[40-50)',
              '[50-60)', '[60-70)', '[70-80)', '[80-90)', '[90-100)']
@@ -97,13 +218,10 @@ MEDICATION_COLUMNS = [
 ]
 
 # ==========================================================================
-# PREPROCESSING — builds a model-ready row from form inputs
+# PREPROCESSING
 # ==========================================================================
 def build_model_input(form_data: dict) -> pd.DataFrame:
-    """Takes the raw form dict and turns it into a one-hot-encoded row
-    aligned to the exact columns the trained model expects."""
-    row = form_data.copy()
-    df = pd.DataFrame([row])
+    df = pd.DataFrame([form_data.copy()])
     df_encoded = pd.get_dummies(df)
     df_encoded.columns = [re.sub(r'[\[\]<>]', '', col) for col in df_encoded.columns]
     df_encoded = df_encoded.reindex(columns=model_columns, fill_value=0)
@@ -151,7 +269,7 @@ def retrieve_chunks(query: str, top_k: int = 5) -> str:
         chunks_text.append(f"[Source: {meta['source']}, {meta['filename']}]\n{doc}")
     return "\n\n---\n\n".join(chunks_text)
 
-def build_prompt(query: str, patient_context: dict | None) -> str:
+def build_prompt(query: str, patient_context) -> str:
     retrieved_context = retrieve_chunks(query, top_k=5)
 
     if patient_context:
@@ -184,7 +302,7 @@ Provide a clear, structured answer with source citations. Include a brief
 disclaimer that this is a decision-support suggestion, not a replacement
 for clinical judgment."""
 
-def generate_answer(query: str, patient_context: dict | None, hf_token: str) -> str:
+def generate_answer(query: str, patient_context, hf_token: str) -> str:
     client_llm = InferenceClient(token=hf_token)
     prompt = build_prompt(query, patient_context)
     response = client_llm.chat.completions.create(
@@ -195,9 +313,9 @@ def generate_answer(query: str, patient_context: dict | None, hf_token: str) -> 
     return response.choices[0].message.content
 
 # ==========================================================================
-# SIDEBAR — API token
+# SIDEBAR
 # ==========================================================================
-st.sidebar.title("Settings")
+st.sidebar.markdown("### Settings")
 hf_token = st.sidebar.text_input("Hugging Face API token", type="password")
 if not hf_token:
     st.sidebar.warning("Enter your Hugging Face token to enable answers.")
@@ -209,25 +327,23 @@ if "patient_context" not in st.session_state:
     st.session_state.patient_context = None
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
-if "general_chat_history" not in st.session_state:
-    st.session_state.general_chat_history = []
 
 # ==========================================================================
-# TABS
+# HEADER
 # ==========================================================================
-tab1, tab2 = st.tabs(["🩺 New Patient Assessment", "💬 Ask the Guidelines"])
+st.markdown('<div class="app-eyebrow">Clinical decision support</div>', unsafe_allow_html=True)
+st.markdown('<div class="app-title">Diabetes Readmission <span class="pink">Risk Assistant</span></div>', unsafe_allow_html=True)
+st.markdown('<div class="app-sub">Enter a patient\'s details to get a readmission risk score, or skip straight to asking a question — the assistant answers from ADA, WHO, CDC, and Mayo Clinic guidelines either way.</div>', unsafe_allow_html=True)
 
-# --------------------------------------------------------------------------
-# TAB 1: Patient intake form + risk + iterative Q&A
-# --------------------------------------------------------------------------
-with tab1:
-    st.header("New Patient Assessment")
-
+# ==========================================================================
+# PATIENT FORM (optional)
+# ==========================================================================
+with st.expander("Patient Information (optional — fill in for a personalized answer)", expanded=False):
     with st.form("patient_form"):
         st.caption(f"Auto-generated Encounter ID: {random.randint(100000, 999999)} "
                    f"(display only — not used in prediction)")
 
-        st.subheader("Demographics & Admission")
+        st.markdown('<div class="section-label">Demographics & Admission</div>', unsafe_allow_html=True)
         c1, c2, c3 = st.columns(3)
         age = c1.selectbox("Age band", AGE_BANDS, index=6)
         admission_type_id = c2.selectbox(
@@ -241,7 +357,7 @@ with tab1:
             "Discharge disposition", list(DISCHARGE_DISPOSITION.keys()),
             format_func=lambda x: DISCHARGE_DISPOSITION[x])
 
-        st.subheader("Clinical Utilization")
+        st.markdown('<div class="section-label">Clinical Utilization</div>', unsafe_allow_html=True)
         c1, c2, c3, c4 = st.columns(4)
         time_in_hospital = c1.number_input("Time in hospital (days)", 1, 14, 3)
         num_lab_procedures = c2.number_input("Number of lab procedures", 0, 150, 40)
@@ -254,18 +370,18 @@ with tab1:
         number_inpatient = c3.number_input("Prior inpatient admissions", 0, 20, 0)
         number_diagnoses = c4.number_input("Number of diagnoses", 1, 20, 7)
 
-        st.subheader("Diagnoses (grouped categories)")
+        st.markdown('<div class="section-label">Diagnoses (grouped categories)</div>', unsafe_allow_html=True)
         c1, c2, c3 = st.columns(3)
         diag_1 = c1.selectbox("Primary diagnosis", DIAG_CATEGORIES, index=0)
         diag_2 = c2.selectbox("Secondary diagnosis", DIAG_CATEGORIES, index=1)
         diag_3 = c3.selectbox("Additional diagnosis", DIAG_CATEGORIES, index=5)
 
-        st.subheader("Lab Results")
+        st.markdown('<div class="section-label">Lab Results</div>', unsafe_allow_html=True)
         c1, c2 = st.columns(2)
         max_glu_serum = c1.selectbox("Glucose serum test", ["Not Tested", "Norm", ">200", ">300"])
         A1Cresult = c2.selectbox("A1C result", ["Not Tested", "Norm", ">7", ">8"])
 
-        st.subheader("Medications")
+        st.markdown('<div class="section-label">Medications</div>', unsafe_allow_html=True)
         st.caption("Status of each diabetes medication during this encounter")
         med_values = {}
         med_cols = st.columns(4)
@@ -323,68 +439,57 @@ with tab1:
             "time_in_hospital": time_in_hospital,
         }
         st.session_state.patient_context = patient_context
-        st.session_state.chat_history = []  # reset Q&A for the new patient
+        st.session_state.chat_history = []
 
-    # ---- Display risk result ----
-    if st.session_state.patient_context:
-        ctx = st.session_state.patient_context
-        risk_level = get_risk_level(ctx["risk_score"])
-        color = {"High": "🔴", "Moderate": "🟡", "Low": "🟢"}[risk_level]
+# ==========================================================================
+# RISK RESULT (if a patient has been assessed)
+# ==========================================================================
+if st.session_state.patient_context:
+    ctx = st.session_state.patient_context
+    risk_level = get_risk_level(ctx["risk_score"])
+    risk_class = {"High": "risk-high", "Moderate": "risk-moderate", "Low": "risk-low"}[risk_level]
 
-        st.divider()
-        st.subheader("Risk Assessment Result")
-        c1, c2 = st.columns([1, 2])
-        c1.metric("30-Day Readmission Risk", f"{ctx['risk_score']*100:.1f}%", risk_level)
-        c1.write(f"{color} **{risk_level} risk**")
-
+    st.markdown('<div class="result-card">', unsafe_allow_html=True)
+    c1, c2 = st.columns([1, 2])
+    with c1:
+        st.metric("30-Day Readmission Risk", f"{ctx['risk_score']*100:.1f}%")
+        st.markdown(f'<span class="risk-badge {risk_class}">{risk_level} risk</span>', unsafe_allow_html=True)
+    with c2:
+        st.markdown("**Flags**")
         flags = get_risk_flags(ctx)
-        with c2:
-            st.write("**Flags:**")
-            if flags:
-                for f in flags:
-                    st.write(f"- {f}")
-            else:
-                st.write("None triggered.")
-
-        st.divider()
-        st.subheader("Ask About This Patient")
-        st.caption("Ask as many questions as you like — each builds on this patient's profile.")
-
-        for q, a in st.session_state.chat_history:
-            with st.chat_message("user"):
-                st.write(q)
-            with st.chat_message("assistant"):
-                st.write(a)
-
-        patient_query = st.chat_input("e.g. What should the discharge plan include?")
-        if patient_query:
-            if not hf_token:
-                st.error("Please enter your Hugging Face token in the sidebar first.")
-            else:
-                with st.spinner("Retrieving guidelines and generating answer..."):
-                    answer = generate_answer(patient_query, ctx, hf_token)
-                st.session_state.chat_history.append((patient_query, answer))
-                st.rerun()
-
-# --------------------------------------------------------------------------
-# TAB 2: General guideline Q&A (no patient context)
-# --------------------------------------------------------------------------
-with tab2:
-    st.header("Ask the Diabetes Management Guidelines")
-    st.caption("General questions answered from ADA, WHO, CDC, and Mayo Clinic guidelines — no patient context.")
-
-    for q, a in st.session_state.general_chat_history:
-        with st.chat_message("user"):
-            st.write(q)
-        with st.chat_message("assistant"):
-            st.write(a)
-
-    general_query = st.chat_input("e.g. What are the glycemic targets for hospitalized patients?", key="general_input")
-    if general_query:
-        if not hf_token:
-            st.error("Please enter your Hugging Face token in the sidebar first.")
+        if flags:
+            for f in flags:
+                st.markdown(f'<div class="flag-item">{f}</div>', unsafe_allow_html=True)
         else:
-            with st.spinner("Retrieving guidelines and generating answer..."):
-                answer = generate_answer(general_query, None, hf_token)
-            st.session_state.general_chat_history.append((general_query, answer))
-            st.rerun()
+            st.write("None triggered.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    if st.button("Clear patient and ask general questions instead"):
+        st.session_state.patient_context = None
+        st.session_state.chat_history = []
+        st.rerun()
+
+# ==========================================================================
+# UNIFIED Q&A — below everything, works with or without patient context
+# ==========================================================================
+st.markdown('<div class="section-label">Ask a Question</div>', unsafe_allow_html=True)
+if st.session_state.patient_context:
+    st.caption("Answers will be personalized to the patient assessed above.")
+else:
+    st.caption("No patient loaded — answers will be general guidance from ADA, WHO, CDC, and Mayo Clinic.")
+
+for q, a in st.session_state.chat_history:
+    with st.chat_message("user"):
+        st.write(q)
+    with st.chat_message("assistant"):
+        st.write(a)
+
+query = st.chat_input("e.g. What should be included in a discharge plan?")
+if query:
+    if not hf_token:
+        st.error("Please enter your Hugging Face token in the sidebar first.")
+    else:
+        with st.spinner("Retrieving guidelines and generating answer..."):
+            answer = generate_answer(query, st.session_state.patient_context, hf_token)
+        st.session_state.chat_history.append((query, answer))
+        st.rerun()
