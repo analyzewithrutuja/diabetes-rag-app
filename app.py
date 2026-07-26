@@ -171,32 +171,31 @@ div[data-testid="stForm"] {
     background: #faf7f9; border-radius: 10px;
 }
 
-/* Make the question text input white, not blending with the page background */
+/* Search-bar look: input has no visible border of its own, since it sits
+   inside a bordered container that provides the box outline */
 [data-testid="stTextInput"] input {
-    background-color: #ffffff !important;
-    border: 1.5px solid var(--border) !important;
-    border-radius: 10px !important;
-    padding: 10px 54px 10px 14px !important;
-    height: 46px !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 8px 6px !important;
+    height: 38px !important;
 }
 [data-testid="stTextInput"] input:focus {
-    border-color: var(--pink) !important;
-    box-shadow: 0 0 0 2px rgba(232,24,122,0.15) !important;
+    box-shadow: none !important;
+    outline: none !important;
 }
 
-/* Circular pink send button next to the question box */
-/* Circular pink send button, overlaid inside the right edge of the question box */
-div:has(> [data-testid="stMarkdown"] .ask-btn-anchor) + div [data-testid="stButton"] {
-    margin-top: -48px !important;
-    width: 100% !important;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding-right: 10px;
-    position: relative;
-    z-index: 5;
+[data-testid="stHorizontalBlock"] { align-items: center !important; }
+
+/* Compact pill look for the nested search-bar container specifically */
+[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stVerticalBlockBorderWrapper"] {
+    padding: 6px 10px !important;
+    box-shadow: none !important;
 }
-div:has(> [data-testid="stMarkdown"] .ask-btn-anchor) + div [data-testid="stButton"] button {
+
+/* Circular pink send button */
+.ask-btn-marker ~ div [data-testid="stButton"] button,
+div:has(> [data-testid="stMarkdown"] .ask-btn-marker) + div [data-testid="stButton"] button {
     border-radius: 50% !important;
     width: 32px !important; height: 32px !important;
     min-width: 32px !important;
@@ -547,14 +546,19 @@ with st.container(border=True):
         st.markdown(f'<div class="qa-question">{q}</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="qa-answer">{a}</div>', unsafe_allow_html=True)
 
-    query = st.text_input(
-        "Your question",
-        placeholder="e.g. What should be included in a discharge plan?",
-        label_visibility="collapsed",
-        key="question_box",
-    )
-    st.markdown('<div class="ask-btn-anchor"></div>', unsafe_allow_html=True)
-    ask_clicked = st.button("↑", key="ask_button")
+    query = ""
+    with st.container(border=True):
+        input_col, btn_col = st.columns([11, 1], gap="small")
+        with input_col:
+            query = st.text_input(
+                "Your question",
+                placeholder="e.g. What should be included in a discharge plan?",
+                label_visibility="collapsed",
+                key="question_box",
+            )
+        with btn_col:
+            st.markdown('<span class="ask-btn-marker"></span>', unsafe_allow_html=True)
+            ask_clicked = st.button("↑", key="ask_button")
 
 if ask_clicked and query:
     if not hf_token:
