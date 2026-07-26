@@ -186,15 +186,15 @@ div[data-testid="stForm"] {
 
 /* Circular pink send button next to the question box */
 /* Circular pink send button, overlaid inside the right edge of the question box */
-.ask-btn-anchor ~ div [data-testid="stButton"] {
-    margin-top: -58px !important;
+div:has(> [data-testid="stMarkdown"] .ask-btn-anchor) + div [data-testid="stButton"] {
+    margin-top: -54px !important;
     display: flex;
     justify-content: flex-end;
     padding-right: 8px;
     position: relative;
     z-index: 5;
 }
-.ask-btn-anchor ~ div [data-testid="stButton"] button {
+div:has(> [data-testid="stMarkdown"] .ask-btn-anchor) + div [data-testid="stButton"] button {
     border-radius: 50% !important;
     width: 34px !important; height: 34px !important;
     min-width: 34px !important;
