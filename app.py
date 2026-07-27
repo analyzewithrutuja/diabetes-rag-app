@@ -194,7 +194,7 @@ div[data-testid="stForm"] {
 /* ---------- Search-bar pill (targeted via st.container key="search_bar") ---------- */
 .st-key-search_bar {
     border-radius: 999px !important;
-    padding: 4px 4px 4px 22px !important;
+    padding: 4px 3px 4px 22px !important;
     box-shadow: none !important;
     border: 1.5px solid var(--border) !important;
     margin-bottom: 0 !important;
@@ -233,9 +233,9 @@ div[data-testid="stForm"] {
 
 [data-testid="stHorizontalBlock"] { align-items: center !important; }
 
-/* Send button — uses the same proven rounded-rectangle gradient style as
-   every other button on the page (Assess Risk, Clear patient), just sized
-   smaller and square, so it's guaranteed to render consistently */
+/* Circular send button — pushed flush against the right edge, with the
+   arrow color forced on both the button and its inner <p> tag so it is
+   never invisible regardless of Streamlit's default text color */
 .st-key-ask_button {
     margin: 0 !important;
     display: flex !important;
@@ -246,27 +246,28 @@ div[data-testid="stForm"] {
     background: linear-gradient(135deg, #e8187a, #f9004d) !important;
     color: #ffffff !important;
     border: none !important;
-    border-radius: 10px !important;
-    width: 42px !important;
-    height: 42px !important;
-    min-width: 42px !important;
+    border-radius: 50% !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
     padding: 0 !important;
     margin: 0 !important;
-    font-size: 1.3rem !important;
-    font-weight: 800 !important;
-    line-height: 1 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    box-shadow: 0 4px 12px rgba(232,24,122,0.35) !important;
+    box-shadow: 0 4px 12px rgba(232,24,122,0.4) !important;
     transition: transform 0.18s ease, box-shadow 0.18s ease !important;
 }
 .st-key-ask_button button:hover {
-    transform: translateY(-1px) !important;
-    box-shadow: 0 6px 16px rgba(232,24,122,0.45) !important;
+    transform: scale(1.08) !important;
+    box-shadow: 0 6px 16px rgba(232,24,122,0.5) !important;
+}
+.st-key-ask_button button:active {
+    transform: scale(0.95) !important;
 }
 .st-key-ask_button button p {
     margin: 0 !important;
+    padding: 0 !important;
     line-height: 1 !important;
     font-size: 1.3rem !important;
     font-weight: 800 !important;
