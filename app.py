@@ -478,8 +478,6 @@ def generate_answer(query: str, patient_context, hf_token: str) -> str:
 # ==========================================================================
 st.sidebar.markdown("### Settings")
 hf_token = st.sidebar.text_input("Hugging Face API token", type="password")
-if not hf_token:
-    st.sidebar.warning("Enter your Hugging Face token to enable answers.")
 
 # ==========================================================================
 # SESSION STATE
