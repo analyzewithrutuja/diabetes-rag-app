@@ -236,7 +236,8 @@ div[data-testid="stForm"] {
 /* Circular send button — pushed flush against the right edge, with the
    arrow color forced on both the button and its inner <p> tag so it is
    never invisible regardless of Streamlit's default text color */
-.st-key-ask_button {
+html body .st-key-ask_button {
+    width: 100% !important;
     margin: 0 !important;
     display: flex !important;
     align-items: center !important;
