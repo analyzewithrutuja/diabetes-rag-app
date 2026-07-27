@@ -474,11 +474,9 @@ def generate_answer(query: str, patient_context, hf_token: str) -> str:
     return response.choices[0].message.content
 
 # ==========================================================================
-# SETTINGS (inline, no separate sidebar)
+# TOKEN — loaded securely from Streamlit Cloud Secrets, never shown in the UI
 # ==========================================================================
-with st.expander("Settings — Hugging Face API token", expanded=False):
-    hf_token = st.text_input("Hugging Face API token", type="password", label_visibility="collapsed",
-                              placeholder="Paste your Hugging Face token here")
+hf_token = st.secrets["HF_TOKEN"]
 
 # ==========================================================================
 # SESSION STATE
