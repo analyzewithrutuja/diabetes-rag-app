@@ -204,7 +204,7 @@ div[data-testid="stForm"] {
 .st-key-search_bar:hover {
     border-color: #d8d8e0 !important;
 }
-.st-key-search_bar:has(input:focus) {
+.st-key-search_bar:focus-within {
     border-color: var(--pink) !important;
     box-shadow: 0 0 0 3px rgba(232,24,122,0.1) !important;
 }
@@ -236,11 +236,10 @@ div[data-testid="stForm"] {
 /* Circular send button — pushed flush against the right edge, with the
    arrow color forced on both the button and its inner <p> tag so it is
    never invisible regardless of Streamlit's default text color */
-/* Directly target the actual Streamlit column that holds the send button,
-   turning it into a flex container so the button is genuinely pushed to
-   its right edge — scoped with :has() so only this specific column is
-   affected, not the patient form's columns */
-[data-testid="column"]:has(.st-key-ask_button) {
+/* Directly target the LAST column within our search-bar container (the
+   one holding the send button) using descendant + :last-child — no :has()
+   needed, so this works even in browsers that don't support :has() */
+.st-key-search_bar [data-testid="column"]:last-child {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-end !important;
