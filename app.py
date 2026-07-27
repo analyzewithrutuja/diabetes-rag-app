@@ -195,7 +195,7 @@ div[data-testid="stForm"] {
 .st-key-search_bar {
     position: relative !important;
     border-radius: 999px !important;
-    padding: 4px 3px 4px 22px !important;
+    padding: 4px 2px 4px 22px !important;
     box-shadow: none !important;
     border: 1.5px solid var(--border) !important;
     margin-bottom: 0 !important;
@@ -253,7 +253,7 @@ div[data-testid="stForm"] {
    right edge, vertically centered, regardless of layout quirks. */
 html body .st-key-ask_button {
     position: absolute !important;
-    right: 4px !important;
+    right: 2px !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
     margin: 0 !important;
