@@ -236,8 +236,17 @@ div[data-testid="stForm"] {
 /* Circular send button — pushed flush against the right edge, with the
    arrow color forced on both the button and its inner <p> tag so it is
    never invisible regardless of Streamlit's default text color */
+/* Directly target the actual Streamlit column that holds the send button,
+   turning it into a flex container so the button is genuinely pushed to
+   its right edge — scoped with :has() so only this specific column is
+   affected, not the patient form's columns */
+[data-testid="column"]:has(.st-key-ask_button) {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+}
+
 html body .st-key-ask_button {
-    width: 100% !important;
     margin: 0 !important;
     display: flex !important;
     align-items: center !important;
