@@ -194,7 +194,7 @@ div[data-testid="stForm"] {
 /* ---------- Search-bar pill (targeted via st.container key="search_bar") ---------- */
 .st-key-search_bar {
     border-radius: 999px !important;
-    padding: 4px 10px 4px 22px !important;
+    padding: 4px 4px 4px 22px !important;
     box-shadow: none !important;
     border: 1.5px solid var(--border) !important;
     margin-bottom: 0 !important;
@@ -243,28 +243,29 @@ div[data-testid="stForm"] {
 .st-key-ask_button button {
     background: linear-gradient(135deg, #e8187a, #f9004d) !important;
     border-radius: 50% !important;
-    width: 38px !important; height: 38px !important;
-    min-width: 38px !important;
+    width: 40px !important; height: 40px !important;
+    min-width: 40px !important;
     padding: 0 !important;
     margin: 0 !important;
-    font-size: 1.05rem !important;
-    font-weight: 700 !important;
+    font-size: 1.2rem !important;
+    font-weight: 900 !important;
     line-height: 1 !important;
     display: flex; align-items: center; justify-content: center;
-    border: 2px solid #ffffff !important;
-    box-shadow: 0 4px 14px rgba(232,24,122,0.45) !important;
+    border: none !important;
+    box-shadow: 0 3px 10px rgba(232,24,122,0.4) !important;
     transition: transform 0.18s ease, box-shadow 0.18s ease !important;
 }
 .st-key-ask_button button:hover {
-    transform: scale(1.1) !important;
-    box-shadow: 0 6px 18px rgba(232,24,122,0.55) !important;
+    transform: scale(1.08) !important;
+    box-shadow: 0 5px 14px rgba(232,24,122,0.5) !important;
 }
 .st-key-ask_button button:active {
-    transform: scale(0.96) !important;
+    transform: scale(0.94) !important;
 }
 .st-key-ask_button button p {
     margin: 0 !important;
     line-height: 1 !important;
+    font-weight: 900 !important;
 }
 
 /* ---------- Sidebar ---------- */
