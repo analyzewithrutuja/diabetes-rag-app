@@ -474,10 +474,11 @@ def generate_answer(query: str, patient_context, hf_token: str) -> str:
     return response.choices[0].message.content
 
 # ==========================================================================
-# SIDEBAR
+# SETTINGS (inline, no separate sidebar)
 # ==========================================================================
-st.sidebar.markdown("### Settings")
-hf_token = st.sidebar.text_input("Hugging Face API token", type="password")
+with st.expander("Settings — Hugging Face API token", expanded=False):
+    hf_token = st.text_input("Hugging Face API token", type="password", label_visibility="collapsed",
+                              placeholder="Paste your Hugging Face token here")
 
 # ==========================================================================
 # SESSION STATE
