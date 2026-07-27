@@ -193,6 +193,7 @@ div[data-testid="stForm"] {
 
 /* ---------- Search-bar pill (targeted via st.container key="search_bar") ---------- */
 .st-key-search_bar {
+    position: relative !important;
     border-radius: 999px !important;
     padding: 4px 3px 4px 22px !important;
     box-shadow: none !important;
@@ -220,7 +221,7 @@ div[data-testid="stForm"] {
 
 .st-key-search_bar [data-testid="stTextInput"] input {
     background-color: transparent !important;
-    padding: 10px 6px !important;
+    padding: 10px 46px 10px 6px !important;
     height: 40px !important;
     font-size: 0.9rem !important;
     color: var(--navy) !important;
@@ -245,11 +246,18 @@ div[data-testid="stForm"] {
     justify-content: flex-end !important;
 }
 
+/* Belt-and-suspenders: also PIN the button with absolute positioning,
+   anchored to .st-key-search_bar (position:relative above). This does
+   not depend on column width or flex space calculations at all — it
+   simply places the button at a fixed pixel offset from the pill's
+   right edge, vertically centered, regardless of layout quirks. */
 html body .st-key-ask_button {
+    position: absolute !important;
+    right: 4px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
     margin: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
+    z-index: 10 !important;
 }
 html body .st-key-ask_button button {
     background: linear-gradient(135deg, #e8187a, #f9004d) !important;
@@ -646,7 +654,7 @@ with st.container(border=True):
 
     query = ""
     with st.container(border=True, key="search_bar"):
-        input_col, btn_col = st.columns([10, 1.2], gap="small")
+        input_col, btn_col = st.columns([40, 1], gap="small")
         with input_col:
             query = st.text_input(
                 "Your question",
