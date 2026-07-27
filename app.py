@@ -233,39 +233,44 @@ div[data-testid="stForm"] {
 
 [data-testid="stHorizontalBlock"] { align-items: center !important; }
 
-/* Circular pink send button (targeted via st.button key="ask_button") */
+/* Send button — uses the same proven rounded-rectangle gradient style as
+   every other button on the page (Assess Risk, Clear patient), just sized
+   smaller and square, so it's guaranteed to render consistently */
 .st-key-ask_button {
     margin: 0 !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
+    justify-content: flex-end !important;
 }
 .st-key-ask_button button {
     background: linear-gradient(135deg, #e8187a, #f9004d) !important;
-    border-radius: 50% !important;
-    width: 40px !important; height: 40px !important;
-    min-width: 40px !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 10px !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
     padding: 0 !important;
     margin: 0 !important;
-    font-size: 1.2rem !important;
-    font-weight: 900 !important;
+    font-size: 1.3rem !important;
+    font-weight: 800 !important;
     line-height: 1 !important;
-    display: flex; align-items: center; justify-content: center;
-    border: none !important;
-    box-shadow: 0 3px 10px rgba(232,24,122,0.4) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 12px rgba(232,24,122,0.35) !important;
     transition: transform 0.18s ease, box-shadow 0.18s ease !important;
 }
 .st-key-ask_button button:hover {
-    transform: scale(1.08) !important;
-    box-shadow: 0 5px 14px rgba(232,24,122,0.5) !important;
-}
-.st-key-ask_button button:active {
-    transform: scale(0.94) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(232,24,122,0.45) !important;
 }
 .st-key-ask_button button p {
     margin: 0 !important;
     line-height: 1 !important;
-    font-weight: 900 !important;
+    font-size: 1.3rem !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
 }
 
 /* ---------- Sidebar ---------- */
@@ -627,7 +632,7 @@ with st.container(border=True):
 
     query = ""
     with st.container(border=True, key="search_bar"):
-        input_col, btn_col = st.columns([11, 1], gap="small")
+        input_col, btn_col = st.columns([10, 1.2], gap="small")
         with input_col:
             query = st.text_input(
                 "Your question",
