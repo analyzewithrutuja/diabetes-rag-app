@@ -242,14 +242,18 @@ div[data-testid="stForm"] {
     align-items: center !important;
     justify-content: flex-end !important;
 }
-.st-key-ask_button button {
+html body .st-key-ask_button button {
     background: linear-gradient(135deg, #e8187a, #f9004d) !important;
     color: #ffffff !important;
     border: none !important;
     border-radius: 50% !important;
     width: 40px !important;
-    height: 40px !important;
     min-width: 40px !important;
+    max-width: 40px !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    box-sizing: border-box !important;
     padding: 0 !important;
     margin: 0 !important;
     display: flex !important;
@@ -258,14 +262,14 @@ div[data-testid="stForm"] {
     box-shadow: 0 4px 12px rgba(232,24,122,0.4) !important;
     transition: transform 0.18s ease, box-shadow 0.18s ease !important;
 }
-.st-key-ask_button button:hover {
+html body .st-key-ask_button button:hover {
     transform: scale(1.08) !important;
     box-shadow: 0 6px 16px rgba(232,24,122,0.5) !important;
 }
-.st-key-ask_button button:active {
+html body .st-key-ask_button button:active {
     transform: scale(0.95) !important;
 }
-.st-key-ask_button button p {
+html body .st-key-ask_button button p {
     margin: 0 !important;
     padding: 0 !important;
     line-height: 1 !important;
